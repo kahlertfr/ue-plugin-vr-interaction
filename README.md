@@ -19,7 +19,7 @@ VRInteraction/
 │       └── Private/
 │           └── VRInteractionModule.cpp
 ├── Resources/                 # Plugin resources (icons, etc.)
-│   └── Icon128.png
+│   └── README.md              # Instructions for adding plugin icon
 └── Content/                   # Blueprints and assets (to be added)
 ```
 
