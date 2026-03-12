@@ -18,7 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnVRLogUpdated);
  * Access from Blueprint:
  *   Get Game Instance → Get Subsystem (VRLogManager)
  */
-UCLASS()
+UCLASS(BlueprintType)
 class VRINTERACTION_API UVRLogManager : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
