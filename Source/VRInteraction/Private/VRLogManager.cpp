@@ -14,10 +14,13 @@ void UVRLogManager::AddMessage(const FString& Message)
 
 void UVRLogManager::AddMessageF(const TCHAR* Fmt, ...)
 {
+	constexpr int32 MaxMessageLength = 4096;
+	TCHAR Buffer[MaxMessageLength];
 	va_list Args;
 	va_start(Args, Fmt);
-	AddMessage(FString::PrintfV(Fmt, Args));
+	FCString::GetVarArgs(Buffer, MaxMessageLength, Fmt, Args);
 	va_end(Args);
+	AddMessage(FString(Buffer));
 }
 
 void UVRLogManager::ClearMessages()
