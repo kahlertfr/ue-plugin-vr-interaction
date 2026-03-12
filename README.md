@@ -61,7 +61,46 @@ The plugin provides two classes that work together to display log messages on a 
 
 ---
 
-### Step 1 – Push log messages from C++
+### Step 1 – Declare the module dependency
+
+> **This step is required for every plugin or game module that uses `UVRLogManager` from C++.**
+> Skipping it produces a linker error such as:
+> `unresolved external symbol "__declspec(dllimport) … Z_Construct_UClass_UVRLogManager_NoRegister"`
+
+#### 1a – Build.cs
+
+In the consuming module's `.Build.cs` add `"VRInteraction"` to the dependency list:
+
+```csharp
+// YourPlugin/Source/YourPlugin/YourPlugin.Build.cs
+PublicDependencyModuleNames.AddRange(new string[]
+{
+    "Core", "CoreUObject", "Engine",
+    "VRInteraction"   // ← required to link against UVRLogManager
+});
+```
+
+Use `PrivateDependencyModuleNames` instead if you only reference `UVRLogManager` from `.cpp` files (not from public headers).
+
+#### 1b – .uplugin (plugin-to-plugin only)
+
+If the consuming module lives inside another UE plugin (not directly in the game project), also declare the dependency in that plugin's `.uplugin` descriptor so the engine loads VRInteraction first:
+
+```json
+// YourPlugin/YourPlugin.uplugin
+{
+    "Plugins": [
+        {
+            "Name": "VRInteraction",
+            "Enabled": true
+        }
+    ]
+}
+```
+
+---
+
+### Step 2 – Push log messages from C++
 
 Obtain the subsystem via the `UGameInstance` and call `AddMessage`:
 
@@ -82,7 +121,7 @@ From Blueprint: `Get Game Instance → Get Subsystem (VRLogManager) → Add Mess
 
 ---
 
-### Step 2 – Create the display Blueprint
+### Step 3 – Create the display Blueprint
 
 1. In the **Content Browser** right-click → **Blueprint Class**.
 2. Search for `VRLogDisplayActor` and select it as the parent class.
@@ -119,7 +158,7 @@ Event OnLogTextUpdated (NewText)
 
 ---
 
-### Step 3 – Configure the actor
+### Step 4 – Configure the actor
 
 Select `BP_VRLogDisplay` in the **Details** panel to tune the formatting:
 
@@ -127,11 +166,18 @@ Select `BP_VRLogDisplay` in the **Details** panel to tune the formatting:
 |----------|---------|-------------|
 | `Max Display Lines` | 10 | Maximum number of lines shown on screen at once. Older lines scroll off. |
 | `Max Line Width` | 40 | Maximum characters per line. Longer messages are word-wrapped automatically. |
-| `Max Stored Messages` | 100 | Maximum messages kept by `UVRLogManager` before old ones are discarded. Configure at runtime (e.g. in your GameMode's `BeginPlay`) by accessing the subsystem: `GetGameInstance()->GetSubsystem<UVRLogManager>()->MaxStoredMessages = 50;` |
+
+To cap how many messages `UVRLogManager` keeps in memory, configure `MaxStoredMessages` on the subsystem at runtime (e.g. in your GameMode's `BeginPlay`):
+
+```cpp
+GetGameInstance()->GetSubsystem<UVRLogManager>()->MaxStoredMessages = 50;
+```
+
+The default is **100**. When the limit is reached the oldest message is dropped before the new one is stored.
 
 ---
 
-### Step 4 – Place the actor in the level
+### Step 5 – Place the actor in the level
 
 Drag `BP_VRLogDisplay` from the Content Browser into the level and position it where it should appear in the VR scene (e.g. attached to a wall or floating near the player).
 

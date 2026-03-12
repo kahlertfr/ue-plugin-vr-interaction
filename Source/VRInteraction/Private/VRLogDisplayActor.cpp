@@ -98,8 +98,9 @@ TArray<FString> AVRLogDisplayActor::WordWrapLine(const FString& Input, int32 InM
 	}
 
 	// Split into individual words, preserving existing newlines as hard breaks.
+	// Culling empty entries means consecutive or trailing newlines produce no extra blank lines.
 	TArray<FString> HardLines;
-	Input.ParseIntoArray(HardLines, TEXT("\n"), false);
+	Input.ParseIntoArray(HardLines, TEXT("\n"), true);
 
 	for (const FString& HardLine : HardLines)
 	{
