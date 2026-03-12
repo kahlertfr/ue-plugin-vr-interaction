@@ -12,6 +12,14 @@ void UVRLogManager::AddMessage(const FString& Message)
 	OnLogUpdated.Broadcast();
 }
 
+void UVRLogManager::AddMessageF(const TCHAR* Fmt, ...)
+{
+	va_list Args;
+	va_start(Args, Fmt);
+	AddMessage(FString::PrintfV(Fmt, Args));
+	va_end(Args);
+}
+
 void UVRLogManager::ClearMessages()
 {
 	Messages.Empty();

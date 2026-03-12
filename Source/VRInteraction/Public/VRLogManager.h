@@ -35,6 +35,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "VR Log")
 	void AddMessage(const FString& Message);
 
+	/**
+	 * Append a printf-formatted message to the log (C++ only).
+	 * Supports the same format specifiers as UE_LOG / FString::Printf: %d, %f, %s, etc.
+	 *
+	 * Example:
+	 *   Log->AddMessageF(TEXT("Count %d exceeds range [%d, %d]."), NumPositions, Start, End);
+	 *
+	 * Blueprint callers: use AddMessage with FString::Printf pre-formatted outside the call.
+	 */
+	void AddMessageF(PRINTF_FORMAT_STRING const TCHAR* Fmt, ...) VARARGS;
+
 	/** Remove all stored messages and fire OnLogUpdated. */
 	UFUNCTION(BlueprintCallable, Category = "VR Log")
 	void ClearMessages();

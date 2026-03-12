@@ -102,7 +102,7 @@ If the consuming module lives inside another UE plugin (not directly in the game
 
 ### Step 2 – Push log messages from C++
 
-Obtain the subsystem via the `UGameInstance` and call `AddMessage`:
+Obtain the subsystem via the `UGameInstance` and call `AddMessage` (plain string) or `AddMessageF` (printf-style format specifiers):
 
 ```cpp
 #include "VRLogManager.h"
@@ -112,10 +112,19 @@ if (UGameInstance* GI = GetGameInstance())
 {
     if (UVRLogManager* Log = GI->GetSubsystem<UVRLogManager>())
     {
+        // Plain string
         Log->AddMessage(TEXT("Calibration complete."));
+
+        // Printf-style format specifiers (%d, %f, %s, …) – C++ only
+        Log->AddMessageF(
+            TEXT("QueryPositions.Num() (%d) exceeds the time range [%d, %d] (%d steps)."),
+            NumPositions, QueryTimeStart, QueryTimeEnd, TimeRangeSize);
     }
 }
 ```
+
+> `AddMessageF` is a C++-only helper and is **not** available in Blueprint.
+> In Blueprint, build the formatted string first with a **Format Text** or **Append** node and pass it to `AddMessage`.
 
 From Blueprint: `Get Game Instance → Get Subsystem (VRLogManager) → Add Message`.
 
