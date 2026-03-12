@@ -44,7 +44,7 @@ public:
 	 *
 	 * Blueprint callers: use AddMessage with FString::Printf pre-formatted outside the call.
 	 */
-	void AddMessageF(PRINTF_FORMAT_STRING const TCHAR* Fmt, ...) VARARGS;
+	void AddMessageF(const TCHAR* Fmt, ...) VARARGS;
 
 	/** Remove all stored messages and fire OnLogUpdated. */
 	UFUNCTION(BlueprintCallable, Category = "VR Log")
