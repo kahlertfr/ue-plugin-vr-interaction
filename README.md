@@ -29,6 +29,19 @@ VRInteraction/
 
 ## Features
 
+- Debounced hand-menu cubes: `BP_Menu_Icon` owns a `MenuTouchGate` component.
+  Both VRPawn index-finger callbacks call `ShouldDispatchFingerTouch` before
+  sending `FingerCollision`. Menu touches toggle immediately once per contact;
+  all touching fingertips must leave every mesh of the icon for 0.15 seconds
+  before it rearms, with a minimum 0.5 seconds between accepted toggles. A touch
+  rejected during cooldown stays consumed until release, so holding a finger
+  never schedules another toggle. `ReleaseDelay` and `ToggleCooldown` are editable
+  on the component. Other finger-operated controls pass through unchanged.
+  The icon's old 0.2-second latent Delay is removed. The gate checks current
+  overlap records after physics only while latched and tolerates destroyed or
+  collision-disabled fingertips. `TrajectoryBLab.VR.MenuTouchGate` covers timing
+  and the saved VRPawn/icon/menu Blueprints without requiring a headset.
+
 - Collision-based grab selection: `VRPawn.GetGrabComponentNearMotionController`
   uses `UVRGrabSelection::FindGrabComponentNearGrip` for PhysicsBody objects.
   Attach each `GrabComponent` directly to the collision component or a shared
