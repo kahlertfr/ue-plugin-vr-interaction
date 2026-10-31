@@ -29,6 +29,17 @@ VRInteraction/
 
 ## Features
 
+- Collision-based grab selection: `VRPawn.GetGrabComponentNearMotionController`
+  uses `UVRGrabSelection::FindGrabComponentNearGrip` for PhysicsBody objects.
+  Attach each `GrabComponent` directly to the collision component or a shared
+  ancestor of that object's colliders. Separate views on one actor must have
+  separate collision/grab branches. Candidates come only from geometry within
+  `GrabRadiusFromGripPosition`; distance is measured to collision shapes rather
+  than independent component pivots. Overlapping shapes use geometry-center
+  distance, then component path, to resolve ties consistently. The existing
+  WorldDynamic probe handling remains the fallback when no PhysicsBody grab is
+  in reach. Scaling and offset collision geometry do not change grab ownership.
+
 - Compatible with Unreal Engine 5.6
 - OpenXR support enabled
 - Runtime module for VR interaction
